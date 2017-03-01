@@ -1,0 +1,23 @@
+---
+
+include_vars: "roles/nginx/defaults/main.yml"
+
+drupal_user: "drupaluser"
+drupal_password: "drupalp455w0rd!"
+drupal_version: "drupal-7.54"
+mysql_bind_address: "127.0.0.1"
+drupal_docroot: "/var/www"
+rootdir: "{{ domain }}"
+
+
+civicrm_db: "civicrm"
+civicrm_user: "civicrmuser"
+civicrm_password: "civicrmp455w0rd!"
+civicrm_drush_repo: "https://github.com/civicrm/civicrm-drupal"
+civicrm_drush_branch: "7.x-master"
+civicrm_drush_destination: "~/civiCRM"
+
+civicrm_url: "https://download.civicrm.org/civicrm-4.7.16-drupal.tar.gz?src=donate"
+civicrm_destination: "~/civiCRM.tar.gz"
+
+

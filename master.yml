@@ -10,4 +10,5 @@
 #      - php
 #    - composer
 #    - phpmyadmin
-      - drupal
+    - drupal
+    - civicrm

@@ -1,0 +1,120 @@
+---
+
+#- include_vars: "roles/drupal/defaults/main.yml"
+
+- name: Create civicrm database 
+  mysql_db:
+    name: "{{ civicrm_db }}"
+    state: present
+  register: dbcreated
+
+
+- name: Create a user for civicrm && grant permissions
+  when: dbcreated|success
+  mysql_user:
+    name: "{{ civicrm_user }}"
+    password: "{{ civicrm_password }}"
+    priv: '{{ civicrm_db }}.*:ALL'
+    state: present
+  register: usercreated
+
+#HACK
+- name: Reload privilege tables
+  when: usercreated|success
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - GRANT SELECT ON {{ civicrm_db }}.* TO {{ drupal_user }}@localhost IDENTIFIED BY '{{ drupal_password }}'
+
+- name: Reload privilege tables
+  when: usercreated|success
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - FLUSH PRIVILEGES
+
+
+- name: Failed to create civicrm db 
+  when: dbcreated|failed
+  fail: msg="failed to create '{{ civicrm_db }}' database"
+
+
+- name: copy civicrm.drush.inc
+  copy: src=roles/civicrm/files/civicrm.drush.inc dest=~/.drush/civicrm.drush.inc mode=640
+
+- name: Drush clear-cache
+  command: drush cc drush
+
+
+- name: Download CiviCRM for "{{ drupal_version }}"
+  get_url:
+    url: "{{ civicrm_url }}"
+    dest: "{{ civicrm_destination }}"
+    owner: "root"
+    mode: 0740
+
+- name: Install CiviCRM
+  command: drush civicrm-install --dbhost={{ mysql_bind_address }} --dbname={{ civicrm_db }} --dbuser={{ civicrm_user }} --dbpass={{ civicrm_password }} --destination=/sites/all/modules --tarfile={{ civicrm_destination }} --root={{ drupal_docroot }}/{{ rootdir }}
+
+#HACK
+- name: Delete civicrm.drush.inc from drupal instalation
+  file: path={{ drupal_docroot }}/{{ rootdir }}/sites/all/modules/civicrm/drupal/drush/civicrm.drush.inc state=absent
+
+- name: Enable CiviCRM
+  command: drush pm-enable civicrm --root={{ drupal_docroot }}/{{ rootdir }} 
+
+
+#cambiar permisos permisos
+#copiar los parametros en settings.php
+
+
+
+
+
+
+#- name: Failed to create drupal user
+#  when: usercreated|failed
+#  fail: msg="Failed to create '{{ drupal_user }}' user"
+
+#- name: Ensure document root exists
+#  file: path="{{ drupal_docroot }}" state=directory follow=yes 
+#  register: docrootexist
+
+#- name: Document root doesn't exists
+#  when: docrootexist|failed
+#  file: dest={{ drupal_docroot  }} mode=750 state=directory owner=root group=www-data recurse=yes
+
+
+#- name: Download {{ drupal_version }}
+#  when: docrootexist|success
+#  command: "drush dl '{{ drupal_version }}' --destination='{{ drupal_docroot }}' --drupal-project-rename='{{ drupal_dir }}' -y"
+#  register: drupaldownloaded
+
+#- name: Setup {{ drupal_version }}
+#  when: drupaldownloaded|success
+#  command: drush site-install --yes standard --root={{ drupal_absolute_docroot }} --account-name={{ user }} --account-pass={{ password }} --db-url=mysql://{{ drupal_user }}:'{{ drupal_password }}'@localhost/{{ drupal_db }} --account-mail={{ account_mail }} --site-name={{ site_name }} --site-mail={{ site_mail }}
+#  register: drupalinstalled
+
+#- name: Setup views3 module
+#  when: drupalinstalled|success
+#  command: "drush pm-enable --root={{ drupal_absolute_docroot }} --yes admin ctools views views_ui args"
+#  register: views3installed
+
+# - name: Setup {{ drupal_version }} failed
+#   when: drupaldownloaded|failed
+#   fail: msg="couldn't Download {{ drupal_version }}" 
+
+
+# - name: Setup {{ drupal_version }} failed
+#   when: drupalinstalled|failed
+#   fail: msg="couldn't install {{ drupal_version }}"
+
+# - name: Views3 module failed
+#   when: views3installed|failed
+#   fail: msg="couldn't install views3"
+
+# - name: Set docroot permissions
+#   when: drupalinstalled|success
+#   file: dest='{{ drupal_absolute_docroot }}' mode=750 state=directory owner=root group=www-data recurse=yes
+##770 para files
+
+
+     

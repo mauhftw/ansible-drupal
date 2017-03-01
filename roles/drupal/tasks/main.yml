@@ -53,10 +53,9 @@
   command: "drush pm-enable --root={{ drupal_absolute_docroot }} --yes admin ctools views views_ui args"
   register: views3installed
 
-- name: Setup {{ drupal_version }} failed
+- name: Download {{ drupal_version }} failed
   when: drupaldownloaded|failed
   fail: msg="couldn't Download {{ drupal_version }}" 
-
 
 - name: Setup {{ drupal_version }} failed
   when: drupalinstalled|failed
@@ -69,7 +68,13 @@
 - name: Set docroot permissions
   when: drupalinstalled|success
   file: dest='{{ drupal_absolute_docroot }}' mode=750 state=directory owner=root group=www-data recurse=yes
-##770 para files
+
+- name: Ensure sites/default/files/private exist
+  file: path="{{ drupal_absolute_docroot }}/sites/default/files/private" state=directory follow=yes owner=root group=www-data recurse=yes mode=0770
+
+##crear directorio private
+
+
 
 
      
