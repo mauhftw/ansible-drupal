@@ -1,0 +1,54 @@
+---
+
+- name: install MySQL packages
+  apt: pkg={{ item }} state=installed update_cache=yes
+  with_items: "{{ mysql_packages }}"
+  register: MySQLinstalled
+  notify:
+      - start MySQL
+
+- name: update MySQL root password for all root accounts 
+  mysql_user: name=root host={{ item }} password={{ mysql_password }} state=present
+  with_items:
+    - "{{ ansible_hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: Reload privilege tables
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - FLUSH PRIVILEGES
+
+
+- name: Remove anonymous users
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - DELETE FROM mysql.user WHERE User=''
+
+
+- name: Disallow root login remotely
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1')
+
+
+- name: Remove test database and access to it
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - DROP DATABASE test
+    - DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%'
+  ignore_errors: True
+
+- name: Reload privilege tables
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - FLUSH PRIVILEGES
+
+- name: copy the templates to their respestive destination
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode={{ item.mode | default(644) }}
+  with_items:
+    - { src: 'mysqld.cnf.j2', dest: '/etc/mysql/mysql.conf.d/mysqld.cnf' }
+    - { src: 'root.cnf.j2', dest: '~/.my.cnf', mode: '600' }
+  notify:
+    - restart MySQL

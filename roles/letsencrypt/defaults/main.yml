@@ -1,0 +1,10 @@
+---
+
+webroot_dir: "yourdomain.app"
+domain: "yourdomain.app"
+domain_www: "www.yourdomain.app"                        
+letsencrypt_command: letsencrypt
+letsencrypt_webroot_path: "/var/www/{{ webroot_dir }}"
+letsencrypt_email: mail@yourdomain.app
+
+

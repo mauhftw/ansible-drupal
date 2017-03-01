@@ -1,0 +1,75 @@
+---
+
+- name: Create drupal database 
+  mysql_db:
+    name: "{{ drupal_db }}"
+    state: present
+  register: dbcreated
+
+- name: Create a user for drupal
+  when: dbcreated|success
+  mysql_user:
+    name: "{{ drupal_user }}"
+    password: "{{ drupal_password }}"
+    priv: '{{ drupal_db }}.*:ALL'
+    state: present
+  register: usercreated
+
+- name: Failed to create drupal db 
+  when: dbcreated|failed
+  fail: msg="failed to create '{{ drupal_db }}' database"
+
+- name: Reload privilege tables
+  when: usercreated|success
+  command: 'mysql -ne "{{ item }}"'
+  with_items:
+    - FLUSH PRIVILEGES
+
+- name: Failed to create drupal user
+  when: usercreated|failed
+  fail: msg="Failed to create '{{ drupal_user }}' user"
+
+- name: Ensure document root exists
+  file: path="{{ drupal_docroot }}" state=directory follow=yes 
+  register: docrootexist
+
+- name: Document root doesn't exists
+  when: docrootexist|failed
+  file: dest={{ drupal_docroot  }} mode=750 state=directory owner=root group=www-data recurse=yes
+
+
+- name: Download {{ drupal_version }}
+  when: docrootexist|success
+  command: "drush dl '{{ drupal_version }}' --destination='{{ drupal_docroot }}' --drupal-project-rename='{{ drupal_dir }}' -y"
+  register: drupaldownloaded
+
+- name: Setup {{ drupal_version }}
+  when: drupaldownloaded|success
+  command: drush site-install --yes standard --root={{ drupal_absolute_docroot }} --account-name={{ user }} --account-pass={{ password }} --db-url=mysql://{{ drupal_user }}:'{{ drupal_password }}'@localhost/{{ drupal_db }} --account-mail={{ account_mail }} --site-name={{ site_name }} --site-mail={{ site_mail }}
+  register: drupalinstalled
+
+- name: Setup views3 module
+  when: drupalinstalled|success
+  command: "drush pm-enable --root={{ drupal_absolute_docroot }} --yes admin ctools views views_ui args"
+  register: views3installed
+
+- name: Setup {{ drupal_version }} failed
+  when: drupaldownloaded|failed
+  fail: msg="couldn't Download {{ drupal_version }}" 
+
+
+- name: Setup {{ drupal_version }} failed
+  when: drupalinstalled|failed
+  fail: msg="couldn't install {{ drupal_version }}"
+
+- name: Views3 module failed
+  when: views3installed|failed
+  fail: msg="couldn't install views3"
+
+- name: Set docroot permissions
+  when: drupalinstalled|success
+  file: dest='{{ drupal_absolute_docroot }}' mode=750 state=directory owner=root group=www-data recurse=yes
+##770 para files
+
+
+     

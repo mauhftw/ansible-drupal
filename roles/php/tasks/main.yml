@@ -1,0 +1,31 @@
+---
+
+- name: add PPA repository
+  apt_repository: repo={{ php_repo }}
+
+- name: apt-get update 
+  apt: update_cache=yes
+
+- name: install php packages
+  apt: pkg={{ item }} state=latest
+  with_items: "{{ php_packages }}"
+  register: phpinstalled
+  notify:
+    - start php7-fpm
+
+- name: Set cgi.fix_pathinfo = 1
+  when: phpinstalled|success  
+  replace:
+    dest: /etc/php/7.0/fpm/php.ini
+    regexp: '^;cgi.fix_pathinfo=[0-1]'
+    replace: 'cgi.fix_pathinfo=1'
+    backup: yes
+  notify:
+    - restart php7-fpm
+    - reload nginx
+
+- name: couldn't install php7.0
+  when: phpinstalled|failed
+  fail: msg="Could not install php7.0. Please check logs"
+
+

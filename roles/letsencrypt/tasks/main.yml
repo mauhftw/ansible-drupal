@@ -1,0 +1,30 @@
+---
+
+- name: apt-get update and install letsencrypt
+  apt: name=letsencrypt state=latest update_cache=true
+  register: letsencryptinstalled
+
+- name: letsencrypt instalation failed
+  when: letsencryptinstalled|failed
+  fail: msg="letsencrypt instalation failed, please check logs"
+
+- name: Ensure document root exists
+  file: path="{{ letsencrypt_webroot_path }}" state=directory follow=yes
+  register: docrootexist
+
+- name: Document root doesn't exists
+  when: docrootexist|failed
+  file: dest={{ letsencrypt_webroot_path }} mode=755 state=directory owner=root group=www-data
+
+- name: Create SSL certificate
+  command: "{{ letsencrypt_command }} -a standalone auth --webroot-path {{ letsencrypt_webroot_path }} -d {{ domain }} -d {{ domain_www }} -m {{ letsencrypt_email }} --agree-tos"
+
+- name: Install cronjob for renewing certs
+  copy: src=roles/letsencrypt/files/renewCerts.sh dest=/etc/cron.daily/renewCerts.sh mode=0740
+
+
+
+
+
+
+     

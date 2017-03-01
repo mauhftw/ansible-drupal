@@ -1,0 +1,53 @@
+---
+
+#let's encrypt
+#webroot_dir: "yourdomain.app"
+#domain: "yourdomain.app"
+#domain_www: "www.yourdomain.app"                        
+#letsencrypt_command: letsencrypt
+#letsencrypt_webroot_path: "/var/www/{{ webroot_dir }}"
+#letsencrypt_email: mail@yourdomain.app
+
+
+#nginx
+nginx_worker_processes: "{{ ansible_processor_cores }}"
+domain: yourdomain.app
+domain_www: www.yourdomain.app 
+username: ubuntu                       
+resolver: 8.8.8.8
+
+
+#php
+php_repo: "ppa:ondrej/php"
+php_packages:
+  - php7.0-common
+  - php7.0-cli
+  - php7.0-intl
+  - php7.0-curl
+  - php7.0-json
+  - php7.0-fpm
+  - php7.0-mysql
+  - php7.0-gd
+  - php7.0-mbstring
+  - php7.0-mcrypt
+  - php7.0-memcached
+  - php7.0-apcu
+  - php7.0-xml
+
+#composer
+#composer_web: https://getcomposer.org/installer
+
+#mysql
+mysql_port: "3306"
+mysql_bind_address: "127.0.0.1"
+mysql_password: "{{ vault_mysql_password }}"
+mysql_packages:
+  - mysql-server
+  - mysql-client
+  - python-mysqldb
+  - libmysqlclient-dev
+
+#phpmyadmin
+phpmyadmin_repo: https://github.com/phpmyadmin/phpmyadmin.git
+phpmyadmin_domain_name: phpmyadmin.app
+

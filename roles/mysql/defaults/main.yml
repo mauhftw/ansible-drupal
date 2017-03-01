@@ -1,0 +1,9 @@
+---
+  mysql_port: "3306" 
+  mysql_bind_address: "127.0.0.1" 
+  mysql_password: "root"
+  mysql_packages:
+    - mysql-server
+    - mysql-client
+    - python-mysqldb
+    - libmysqlclient-dev

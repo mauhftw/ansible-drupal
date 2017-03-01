@@ -1,0 +1,13 @@
+---
+ - hosts: local
+   become: yes
+   user: ubuntu
+   roles:
+#      - common
+#   - letsencrypt
+#      - nginx
+#      - mysql
+#      - php
+#    - composer
+#    - phpmyadmin
+      - drupal

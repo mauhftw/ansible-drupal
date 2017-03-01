@@ -1,0 +1,9 @@
+---
+
+- name: start php7-fpm
+  service: name=php7.0-fpm enabled=yes state=started
+
+- name: restart php7-fpm
+  service: name=php7.0-fpm enabled=yes state=restarted
+
+- include: ../nginx/handlers/main.yml
