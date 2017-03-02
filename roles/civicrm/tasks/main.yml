@@ -7,8 +7,7 @@
     name: "{{ civicrm_db }}"
     state: present
   register: dbcreated
-
-
+  
 - name: Create a user for civicrm && grant permissions
   when: dbcreated|success
   mysql_user:
@@ -22,6 +21,7 @@
 - name: Reload privilege tables
   when: usercreated|success
   command: 'mysql -ne "{{ item }}"'
+  no_log: True
   with_items:
     - GRANT SELECT ON {{ civicrm_db }}.* TO {{ drupal_user }}@localhost IDENTIFIED BY '{{ drupal_password }}'
 
@@ -31,18 +31,15 @@
   with_items:
     - FLUSH PRIVILEGES
 
-
 - name: Failed to create civicrm db 
   when: dbcreated|failed
   fail: msg="failed to create '{{ civicrm_db }}' database"
-
 
 - name: copy civicrm.drush.inc
   copy: src=roles/civicrm/files/civicrm.drush.inc dest=~/.drush/civicrm.drush.inc mode=640
 
 - name: Drush clear-cache
   command: drush cc drush
-
 
 - name: Download CiviCRM for "{{ drupal_version }}"
   get_url:
@@ -61,60 +58,40 @@
 - name: Enable CiviCRM
   command: drush pm-enable civicrm --root={{ drupal_docroot }}/{{ rootdir }} 
 
+#copy civicrm params
+- name: Copy settings.php
+  copy: src=files/settings.php dest=/tmp mode=750 owner=root   
+  tags:
+    - edit
 
-#cambiar permisos permisos
-#copiar los parametros en settings.php
+- name: Get settings.php parameters into a var (data)
+  shell: cat /tmp/settings.php
+  register: data
+  tags:
+    - edit
 
-
-
-
-
-
-#- name: Failed to create drupal user
-#  when: usercreated|failed
-#  fail: msg="Failed to create '{{ drupal_user }}' user"
-
-#- name: Ensure document root exists
-#  file: path="{{ drupal_docroot }}" state=directory follow=yes 
-#  register: docrootexist
-
-#- name: Document root doesn't exists
-#  when: docrootexist|failed
-#  file: dest={{ drupal_docroot  }} mode=750 state=directory owner=root group=www-data recurse=yes
-
-
-#- name: Download {{ drupal_version }}
-#  when: docrootexist|success
-#  command: "drush dl '{{ drupal_version }}' --destination='{{ drupal_docroot }}' --drupal-project-rename='{{ drupal_dir }}' -y"
-#  register: drupaldownloaded
-
-#- name: Setup {{ drupal_version }}
-#  when: drupaldownloaded|success
-#  command: drush site-install --yes standard --root={{ drupal_absolute_docroot }} --account-name={{ user }} --account-pass={{ password }} --db-url=mysql://{{ drupal_user }}:'{{ drupal_password }}'@localhost/{{ drupal_db }} --account-mail={{ account_mail }} --site-name={{ site_name }} --site-mail={{ site_mail }}
-#  register: drupalinstalled
-
-#- name: Setup views3 module
-#  when: drupalinstalled|success
-#  command: "drush pm-enable --root={{ drupal_absolute_docroot }} --yes admin ctools views views_ui args"
-#  register: views3installed
-
-# - name: Setup {{ drupal_version }} failed
-#   when: drupaldownloaded|failed
-#   fail: msg="couldn't Download {{ drupal_version }}" 
+- name: Insert civicrm parameters (views3 integration)
+  blockinfile:
+    dest: "{{ drupal_docroot }}/{{ rootdir }}/sites/default/settings.php"
+    marker: "# Custom configuration"
+    insertafter: EOF
+    block: |
+     {{ data.stdout }} 
+  tags:
+    - edit
 
 
-# - name: Setup {{ drupal_version }} failed
-#   when: drupalinstalled|failed
-#   fail: msg="couldn't install {{ drupal_version }}"
+# dir permissions
+- name: Set docroot permissions
+  when: drupalinstalled|success
+  file: dest='{{ drupal_docroot }}/{{ rootdir }}' mode=750 state=directory owner=root group=www-data recurse=yes
 
-# - name: Views3 module failed
-#   when: views3installed|failed
-#   fail: msg="couldn't install views3"
+- name: Change sites/default/files permissions 
+  when: drupalinstalled|success
+  file: path="{{ drupal_docroot }}/{{ rootdir }}/sites/default/files" state=directory follow=yes owner=root group=www-data recurse=yes mode=770
 
-# - name: Set docroot permissions
-#   when: drupalinstalled|success
-#   file: dest='{{ drupal_absolute_docroot }}' mode=750 state=directory owner=root group=www-data recurse=yes
-##770 para files
-
+- name: Change settings.php permissions
+  when: drupalinstalled|success
+  file: path="{{ drupal_absolute_docroot }}/sites/default/settings.php" state=file owner=root group=www-data mode=750
 
      

@@ -72,9 +72,7 @@
 - name: Ensure sites/default/files/private exist
   file: path="{{ drupal_absolute_docroot }}/sites/default/files/private" state=directory follow=yes owner=root group=www-data recurse=yes mode=0770
 
-##crear directorio private
-
-
-
+- name: change sites/default/files permissions
+  file: path="{{ drupal_absolute_docroot }}/sites/default/files" state=directory follow=yes owner=root group=www-data recurse=yes mode=0770
 
      
