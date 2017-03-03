@@ -1,13 +1,10 @@
 ---
 
 #let's encrypt
-#webroot_dir: "yourdomain.app"
-#domain: "yourdomain.app"
-#domain_www: "www.yourdomain.app"                        
-#letsencrypt_command: letsencrypt
-#letsencrypt_webroot_path: "/var/www/{{ webroot_dir }}"
-#letsencrypt_email: mail@yourdomain.app
-
+webroot_dir: "yourdomain.app"                     
+letsencrypt_command: letsencrypt
+letsencrypt_webroot_path: "/var/www/{{ webroot_dir }}"
+letsencrypt_email: mail@yourdomain.app
 
 #nginx
 nginx_worker_processes: "{{ ansible_processor_cores }}"
@@ -15,7 +12,6 @@ domain: yourdomain.app
 domain_www: www.yourdomain.app 
 username: ubuntu                       
 resolver: 8.8.8.8
-
 
 #php
 php_repo: "ppa:ondrej/php"
@@ -34,8 +30,6 @@ php_packages:
   - php7.0-apcu
   - php7.0-xml
 
-#composer
-#composer_web: https://getcomposer.org/installer
 
 #mysql
 mysql_port: "3306"
@@ -47,7 +41,50 @@ mysql_packages:
   - python-mysqldb
   - libmysqlclient-dev
 
+
+#drupal
+drupal_db: "drupal"
+drupal_user: "drupaluser"
+drupal_password: "{{ vault_drupal_password }}"
+drupal_docroot: "/var/www"
+drupal_version: "drupal-7.54"
+drupal_dir: "{{ domain }}"
+drupal_absolute_docroot: "{{ drupal_docroot }}/{{ domain }}"
+site_mail: "noreply@{{ domain }}"
+site_name: "{{ domain }}"
+account_mail: "mymail@domain.com"
+user: "compucorp"
+password: "123456"
+
+#civiCRM
+rootdir: "{{ domain }}"
+civicrm_db: "civicrm"
+civicrm_user: "civicrmuser"
+civicrm_password: "{{ vault_civicrm_password }}"
+civicrm_drush_repo: "https://github.com/civicrm/civicrm-drupal"
+civicrm_drush_branch: "7.x-master"
+civicrm_drush_destination: "~/civiCRM"
+civicrm_url: "https://download.civicrm.org/civicrm-4.7.16-drupal.tar.gz?src=donate"
+civicrm_destination: "~/civiCRM.tar.gz"
+
+#backup_s3
+php_s3_lib_repo: "https://github.com/tpyo/amazon-s3-php-class"
+s3_bucket_name: "compucorp-drupal-backup"
+s3_bucket_dir: "test"
+aws_access_key: "{{ vault_aws_access_key }}"
+aws_access_secret: "{{ vault_aws_access_secret }}"
+profile_name: "drupal_to_aws_s3"                                    #a simple profile name
+backup_destination_name: "compucorp_drupal"                         #just a destination name for the profile
+backup_filename: "rambeloff.tk"
+backup_schedule_name: "daily"
+email_notification_backup: "noreply@rambeloff.tk"
+site_offline_message: "rambeloff.tk is currently under maintenance. We should be back shortly. Thank you for your patience."
+
+
+#composer
+#composer_web: https://getcomposer.org/installer
+
 #phpmyadmin
-phpmyadmin_repo: https://github.com/phpmyadmin/phpmyadmin.git
-phpmyadmin_domain_name: phpmyadmin.app
+#phpmyadmin_repo: https://github.com/phpmyadmin/phpmyadmin.git
+#phpmyadmin_domain_name: phpmyadmin.app
 

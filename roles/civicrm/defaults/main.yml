@@ -1,14 +1,10 @@
 ---
 
-include_vars: "roles/nginx/defaults/main.yml"
-
 drupal_user: "drupaluser"
 drupal_password: "drupalp455w0rd!"
 drupal_version: "drupal-7.54"
 mysql_bind_address: "127.0.0.1"
-drupal_docroot: "/var/www"
-rootdir: "{{ domain }}"
-
+drupal_absolute_docroot: "/var/www/yourdomain.app"
 
 civicrm_db: "civicrm"
 civicrm_user: "civicrmuser"

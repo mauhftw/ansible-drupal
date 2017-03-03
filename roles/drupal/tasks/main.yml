@@ -30,13 +30,9 @@
   fail: msg="Failed to create '{{ drupal_user }}' user"
 
 - name: Ensure document root exists
-  file: path="{{ drupal_docroot }}" state=directory follow=yes 
-  register: docrootexist
-
-- name: Document root doesn't exists
   when: docrootexist|failed
-  file: dest={{ drupal_docroot  }} mode=750 state=directory owner=root group=www-data recurse=yes
-
+  file: dest={{ drupal_docroot }} mode=750 state=directory owner=root group=www-data recurse=yes
+  register: docrootexist
 
 - name: Download {{ drupal_version }}
   when: docrootexist|success
@@ -65,14 +61,6 @@
   when: views3installed|failed
   fail: msg="couldn't install views3"
 
-- name: Set docroot permissions
-  when: drupalinstalled|success
-  file: dest='{{ drupal_absolute_docroot }}' mode=750 state=directory owner=root group=www-data recurse=yes
 
-- name: Ensure sites/default/files/private exist
-  file: path="{{ drupal_absolute_docroot }}/sites/default/files/private" state=directory follow=yes owner=root group=www-data recurse=yes mode=0770
-
-- name: change sites/default/files permissions
-  file: path="{{ drupal_absolute_docroot }}/sites/default/files" state=directory follow=yes owner=root group=www-data recurse=yes mode=0770
-
-     
+# set dir_permissions
+- include: roles/permissions/tasks/main.yml

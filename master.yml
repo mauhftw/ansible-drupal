@@ -3,11 +3,11 @@
    become: yes
    user: ubuntu
    roles:
-#      - common
+#    - common
 #   - letsencrypt
-#      - nginx
-#      - mysql
-#      - php
+#    - nginx
+#    - mysql
+#    - php
 #    - composer
 #    - phpmyadmin
 #    - drupal

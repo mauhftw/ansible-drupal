@@ -1,2 +1,17 @@
 ---
 
+php_s3_lib_repo: "https://github.com/tpyo/amazon-s3-php-class"
+s3_bucket_name: "default_bucket"
+s3_bucket_dir: "test"
+aws_access_key: "your_aws_access_key"
+aws_access_secret: "your_aws_access_secret"
+
+profile_name: "drupal_to_aws_s3"                #a simple profile name
+backup_destination_name: "drupal_backup"        #just a destination name for the profile
+backup_filename: "drupalbackup"         
+backup_schedule_name: "daily_backup"
+email_notification_backup: "noreply@site.app"
+site_offline_message: "site.app is currently under maintenance. We should be back shortly. Thank you for your patience."
+
+drupal_absolute_docroot: "/var/www/yourdomain.app"
+drupal_db: "drupal"

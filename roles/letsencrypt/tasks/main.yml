@@ -9,11 +9,7 @@
   fail: msg="letsencrypt instalation failed, please check logs"
 
 - name: Ensure document root exists
-  file: path="{{ letsencrypt_webroot_path }}" state=directory follow=yes
-  register: docrootexist
-
-- name: Document root doesn't exists
-  when: docrootexist|failed
+  when: letsencryptinstalled|success
   file: dest={{ letsencrypt_webroot_path }} mode=755 state=directory owner=root group=www-data
 
 - name: Create SSL certificate

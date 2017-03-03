@@ -26,20 +26,8 @@
   tags:
     - test
 
+# set dir_permissions
+- include: roles/permissions/tasks/main.yml
 
-# dir permissions
-- name: Set docroot permissions
-  file: dest='{{ drupal_docroot }}/{{ rootdir }}' mode=750 state=directory owner=root group=www-data recurse=yes
-  tags:
-    - test
 
-- name: Change sites/default/files permissions 
-  file: path="{{ drupal_docroot }}/{{ rootdir }}/sites/default/files" state=directory follow=yes owner=root group=www-data recurse=yes mode=770
-  tags:
-    - test
-
-- name: Change settings.php permissions
-  file: path="{{ drupal_absolute_docroot }}/sites/default/settings.php" state=file owner=root group=www-data mode=750
-  tags:
-    - test
      

@@ -1,7 +1,5 @@
 ---
 
-#- include_vars: "roles/drupal/defaults/main.yml"
-
 - name: Create civicrm database 
   mysql_db:
     name: "{{ civicrm_db }}"
@@ -49,14 +47,14 @@
     mode: 0740
 
 - name: Install CiviCRM
-  command: drush civicrm-install --dbhost={{ mysql_bind_address }} --dbname={{ civicrm_db }} --dbuser={{ civicrm_user }} --dbpass={{ civicrm_password }} --destination=/sites/all/modules --tarfile={{ civicrm_destination }} --root={{ drupal_docroot }}/{{ rootdir }}
+  command: drush civicrm-install --dbhost={{ mysql_bind_address }} --dbname={{ civicrm_db }} --dbuser={{ civicrm_user }} --dbpass={{ civicrm_password }} --destination=/sites/all/modules --tarfile={{ civicrm_destination }} --root={{ drupal_absolute_docroot }}
 
 #HACK
 - name: Delete civicrm.drush.inc from drupal instalation
-  file: path={{ drupal_docroot }}/{{ rootdir }}/sites/all/modules/civicrm/drupal/drush/civicrm.drush.inc state=absent
+  file: path={{ drupal_absolute_docroot }}/sites/all/modules/civicrm/drupal/drush/civicrm.drush.inc state=absent
 
 - name: Enable CiviCRM
-  command: drush pm-enable civicrm --root={{ drupal_docroot }}/{{ rootdir }} 
+  command: drush pm-enable civicrm --root={{ drupal_absolute_docroot }}
 
 #copy civicrm params
 - name: Copy settings.php
@@ -72,7 +70,7 @@
 
 - name: Insert civicrm parameters (views3 integration)
   blockinfile:
-    dest: "{{ drupal_docroot }}/{{ rootdir }}/sites/default/settings.php"
+    dest: "{{ drupal_absolute_docroot }}/sites/default/settings.php"
     marker: "# Custom configuration"
     insertafter: EOF
     block: |
@@ -81,17 +79,5 @@
     - edit
 
 
-# dir permissions
-- name: Set docroot permissions
-  when: drupalinstalled|success
-  file: dest='{{ drupal_docroot }}/{{ rootdir }}' mode=750 state=directory owner=root group=www-data recurse=yes
-
-- name: Change sites/default/files permissions 
-  when: drupalinstalled|success
-  file: path="{{ drupal_docroot }}/{{ rootdir }}/sites/default/files" state=directory follow=yes owner=root group=www-data recurse=yes mode=770
-
-- name: Change settings.php permissions
-  when: drupalinstalled|success
-  file: path="{{ drupal_absolute_docroot }}/sites/default/settings.php" state=file owner=root group=www-data mode=750
-
-     
+# set dir_permissions
+- include: roles/permissions/tasks/main.yml

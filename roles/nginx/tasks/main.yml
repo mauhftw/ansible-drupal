@@ -27,16 +27,12 @@
   when: nginxinstalled|success
   template: src=roles/nginx/templates/virtualhost.j2 dest=/etc/nginx/sites-available/{{ domain }} mode=0640
 
-- name: Ensure document root exists
-  file: path="/var/www/{{ domain }}" state=directory follow=yes
-  register: docrootexist
-
 - name: create document root
-  when: (nginxinstalled|success and docrootexist|failed)
+  when: nginxinstalled|success
   file: dest=/var/www/{{ domain }} mode=755 state=directory owner=root group=www-data
 
 - name: document root permissions
-  when: (nginxinstalled|success and docrootexist|failed)
+  when: nginxinstalled|success
   file: dest=/var/www/{{ domain }} mode=755 state=directory owner=root group=www-data recurse=yes
 
 - name: check nginx config

@@ -7,8 +7,17 @@
   notify:
       - start MySQL
 
+- name: copy the templates to their respestive destination
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode={{ item.mode | default(644) }}
+  with_items:
+    - { src: 'mysqld.cnf.j2', dest: '/etc/mysql/mysql.conf.d/mysqld.cnf' }
+    - { src: 'root.cnf.j2', dest: '~/.my.cnf', mode: '600' }
+  notify:
+    - restart MySQL
+
+
 - name: update MySQL root password for all root accounts 
-  mysql_user: name=root host={{ item }} password={{ mysql_password }} state=present
+  mysql_user: name=root host={{ item }} password={{ mysql_password }} config_file=~/.my.cnf state=present
   with_items:
     - "{{ ansible_hostname }}"
     - 127.0.0.1
@@ -45,10 +54,4 @@
   with_items:
     - FLUSH PRIVILEGES
 
-- name: copy the templates to their respestive destination
-  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode={{ item.mode | default(644) }}
-  with_items:
-    - { src: 'mysqld.cnf.j2', dest: '/etc/mysql/mysql.conf.d/mysqld.cnf' }
-    - { src: 'root.cnf.j2', dest: '~/.my.cnf', mode: '600' }
-  notify:
-    - restart MySQL
+
