@@ -10,5 +10,6 @@
 #      - php
 #    - composer
 #    - phpmyadmin
-    - drupal
-    - civicrm
+#    - drupal
+#    - civicrm
+    - backup_s3

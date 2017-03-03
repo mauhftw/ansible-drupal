@@ -1,0 +1,112 @@
+-- MySQL dump 10.13  Distrib 5.7.17, for Linux (x86_64)
+--
+-- Host: localhost    Database: drupaldb
+
+--
+-- Table structure for table `backup_migrate_destinations`
+--
+
+DROP TABLE IF EXISTS `backup_migrate_destinations`;
+
+CREATE TABLE `backup_migrate_destinations` (
+  `destination_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary ID field for the table. Not used for anything except internal lookups.',
+  `machine_name` varchar(255) NOT NULL DEFAULT '0' COMMENT 'The primary identifier for a destination.',
+  `name` varchar(255) NOT NULL COMMENT 'The name of the destination.',
+  `subtype` varchar(32) NOT NULL COMMENT 'The type of the destination.',
+  `location` text NOT NULL COMMENT 'The the location string of the destination.',
+  `settings` text NOT NULL COMMENT 'Other settings for the destination.',
+  PRIMARY KEY (`destination_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+LOCK TABLES `backup_migrate_destinations` WRITE;
+
+INSERT INTO `backup_migrate_destinations` VALUES (1,'{{ s3_bucket_name }}','{{ s3_bucket_name }}','s3','https://{{ aws_access_key }}:{{ aws_access_secret }}.amazonaws.com/{{ s3_bucket_name }}/{{ s3_bucket_dir }}','a:0:{}');
+
+UNLOCK TABLES;
+
+--
+-- Table structure for table `backup_migrate_profiles`
+--
+
+DROP TABLE IF EXISTS `backup_migrate_profiles`;
+
+CREATE TABLE `backup_migrate_profiles` (
+  `profile_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary ID field for the table. Not used for anything except internal lookups.',
+  `machine_name` varchar(255) NOT NULL DEFAULT '0' COMMENT 'The primary identifier for a profile.',
+  `name` varchar(255) NOT NULL COMMENT 'The name of the profile.',
+  `filename` varchar(255) NOT NULL COMMENT 'The name of the profile.',
+  `append_timestamp` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Append a timestamp to the filename.',
+  `timestamp_format` varchar(14) NOT NULL COMMENT 'The format of the timestamp.',
+  `filters` text NOT NULL COMMENT 'The filter settings for the profile.',
+  PRIMARY KEY (`profile_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `backup_migrate_profiles`
+--
+
+LOCK TABLES `backup_migrate_profiles` WRITE;
+
+INSERT INTO `backup_migrate_profiles` VALUES (1,'default','{{ profile_name }}','{{backup_filename }}',1,'Y-m-d\\TH-i-s','a:11:{s:11:\"compression\";s:4:\"gzip\";s:21:\"notify_success_enable\";i:0;s:20:\"notify_success_email\";s:20:\"{{ email_notification_backup }}\";s:21:\"notify_failure_enable\";i:1;s:20:\"notify_failure_email\";s:20:\"{{ email_notification_backup }}\";s:18:\"utils_site_offline\";i:0;s:26:\"utils_site_offline_message\";s:100:\"{{ site_offline_message }}\";s:17:\"utils_description\";s:0:\"\";s:7:\"use_cli\";i:0;s:13:\"ignore_errors\";i:0;s:7:\"sources\";a:3:{s:2:\"db\";a:3:{s:14:\"exclude_tables\";a:0:{}s:13:\"nodata_tables\";a:18:{s:5:\"cache\";s:5:\"cache\";s:11:\"cache_block\";s:11:\"cache_block\";s:15:\"cache_bootstrap\";s:15:\"cache_bootstrap\";s:11:\"cache_field\";s:11:\"cache_field\";s:12:\"cache_filter\";s:12:\"cache_filter\";s:10:\"cache_form\";s:10:\"cache_form\";s:11:\"cache_image\";s:11:\"cache_image\";s:10:\"cache_menu\";s:10:\"cache_menu\";s:10:\"cache_page\";s:10:\"cache_page\";s:10:\"cache_path\";s:10:\"cache_path\";s:12:\"cache_update\";s:12:\"cache_update\";s:11:\"cache_views\";s:11:\"cache_views\";s:16:\"cache_views_data\";s:16:\"cache_views_data\";s:14:\"search_dataset\";s:14:\"search_dataset\";s:12:\"search_index\";s:12:\"search_index\";s:12:\"search_total\";s:12:\"search_total\";s:8:\"sessions\";s:8:\"sessions\";s:8:\"watchdog\";s:8:\"watchdog\";}s:17:\"utils_lock_tables\";i:0;}s:5:\"files\";a:1:{s:17:\"exclude_filepaths\";s:45:\"backup_migrate\r\nstyles\r\ncss\r\njs\r\nctools\r\nless\";}s:7:\"archive\";a:1:{s:17:\"exclude_filepaths\";s:159:\"public://backup_migrate\r\npublic://styles\r\npublic://css\r\npublic://js\r\npublic://ctools\r\npublic://less\r\nprivate://backup_migrate\r\nsites/default/settings.php\r\n/tmp\";}}}');
+
+UNLOCK TABLES;
+
+--
+-- Table structure for table `backup_migrate_schedules`
+--
+
+DROP TABLE IF EXISTS `backup_migrate_schedules`;
+
+CREATE TABLE `backup_migrate_schedules` (
+  `schedule_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary ID field for the table. Not used for anything except internal lookups.',
+  `machine_name` varchar(255) NOT NULL DEFAULT '0' COMMENT 'The primary identifier for a profile.',
+  `name` varchar(255) NOT NULL COMMENT 'The name of the profile.',
+  `source_id` varchar(255) NOT NULL DEFAULT 'db' COMMENT 'The backup_migrate_destination.destination_id of the source to backup from.',
+  `destination_id` varchar(255) NOT NULL DEFAULT '0' COMMENT 'The backup_migrate_destination.destination_id of the destination to back up to.',
+  `copy_destination_id` varchar(32) NOT NULL DEFAULT '0' COMMENT 'A second backup_migrate_destination.destination_id of the destination to copy the backup to.',
+  `profile_id` varchar(255) NOT NULL DEFAULT '0' COMMENT 'The primary identifier for a profile.',
+  `keep` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of backups to keep.',
+  `period` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of seconds between backups.',
+  `enabled` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Whether the schedule is enabled.',
+  `cron` varchar(32) NOT NULL DEFAULT 'builtin' COMMENT 'Whether the schedule should be run during cron.',
+  `cron_schedule` varchar(255) NOT NULL DEFAULT '0 4 * * *' COMMENT 'The cron schedule to run on.',
+  PRIMARY KEY (`schedule_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+--
+-- Dumping data for table `backup_migrate_schedules`
+--
+
+LOCK TABLES `backup_migrate_schedules` WRITE;
+
+INSERT INTO `backup_migrate_schedules` VALUES (1,'untitled_schedule','{{ backup_schedule_name }}','archive','{{ backup_destination_name }}','','default',0,86400,1,'builtin','0 4 * * *');
+
+UNLOCK TABLES;
+
+--
+-- Table structure for table `backup_migrate_sources`
+--
+
+DROP TABLE IF EXISTS `backup_migrate_sources`;
+
+CREATE TABLE `backup_migrate_sources` (
+  `source_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary ID field for the table. Not used for anything except internal lookups.',
+  `machine_name` varchar(32) NOT NULL DEFAULT '0' COMMENT 'The primary identifier for a source.',
+  `name` varchar(255) NOT NULL COMMENT 'The name of the source.',
+  `subtype` varchar(32) NOT NULL COMMENT 'The type of the source.',
+  `location` text NOT NULL COMMENT 'The the location string of the source.',
+  `settings` text NOT NULL COMMENT 'Other settings for the source.',
+  PRIMARY KEY (`source_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- Dumping data for table `backup_migrate_sources`
+--
+
+LOCK TABLES `backup_migrate_sources` WRITE;
+
+UNLOCK TABLES;
+

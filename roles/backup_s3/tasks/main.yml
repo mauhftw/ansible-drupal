@@ -1,0 +1,45 @@
+---
+
+#si corre 2 veces rompe drupal
+- name: Download and enable Backup migrate
+  register: backupinstalled
+  command: drush en -y backup_migrate --root={{ drupal_absolute_docroot }} 
+
+- name: Download s3-php-lib
+  git:
+    repo: "{{ php_s3_lib_repo }}"
+    clone: yes
+    dest: "{{ drupal_absolute_docroot }}/sites/all/libraries/s3-php-class"
+  ignore_errors: true
+
+
+- name: push mysqldump template
+  when: backupinstalled|success
+  template: src=roles/backup_s3/templates/dump.sql.j2 dest=/tmp/backup_dump.sql mode=0640
+
+
+- name: Restore database
+  mysql_db:
+    name: "{{ drupal_db }}"
+    state: import
+    target: /tmp/backup_dump.sql
+  tags:
+    - test
+
+
+# dir permissions
+- name: Set docroot permissions
+  file: dest='{{ drupal_docroot }}/{{ rootdir }}' mode=750 state=directory owner=root group=www-data recurse=yes
+  tags:
+    - test
+
+- name: Change sites/default/files permissions 
+  file: path="{{ drupal_docroot }}/{{ rootdir }}/sites/default/files" state=directory follow=yes owner=root group=www-data recurse=yes mode=770
+  tags:
+    - test
+
+- name: Change settings.php permissions
+  file: path="{{ drupal_absolute_docroot }}/sites/default/settings.php" state=file owner=root group=www-data mode=750
+  tags:
+    - test
+     
