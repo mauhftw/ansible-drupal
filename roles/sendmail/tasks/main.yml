@@ -1,0 +1,43 @@
+---
+
+- name: apt-get update and install sendmail
+  apt: name=sendmail state=latest update_cache=true
+  register: sendmailinstalled
+  notify:
+      - start sendmail
+
+- name: sendmail instalation failed
+  when: sendmailinstalled|failed
+  fail: msg="sendmail instalation failed, please check logs"
+
+#always use ' in responses
+- name: Setup default config
+  when: sendmailinstalled|success
+  expect:
+    command: sendmailconfig
+    responses:
+      'Configure sendmail with the existing /etc/mail/sendmail.conf\? \[Y\] ' : 'Y'
+      'Configure sendmail with the existing /etc/mail/sendmail.mc\? \[Y\] ' : 'Y'
+      'Reload the running sendmail now with the new configuration\? \[Y\] ' : 'Y'
+    timeout: 120
+
+- name: create default user for sendmail
+  when: sendmailinstalled|success
+  user:
+    name: "{{ sendmail_user }}"
+    createhome: no
+    shell: "/bin/false"
+
+#check restart
+- lineinfile:
+    dest: /etc/hosts
+    regexp: '^127.0.0.1   localhost'
+    line: '127.0.0.1   localhost  {{ ansible_hostname }}'
+  notify:
+    - restart networking
+
+
+
+
+
+     

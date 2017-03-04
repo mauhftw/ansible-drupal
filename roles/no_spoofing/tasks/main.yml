@@ -1,0 +1,13 @@
+---
+
+- name: change order 'hosts, bind' to 'bind, hosts'
+  lineinfile:
+    name: /etc/host.conf
+    regexp: "^order"
+    line: "order bind,hosts"
+
+- name: set nospoof on
+  lineinfile:
+    name: /etc/host.conf
+    regexp: "^multi on$"
+    line: "nospoof on"

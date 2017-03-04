@@ -1,6 +1,5 @@
 ---
 
-#si corre 2 veces rompe drupal
 - name: Download and enable Backup migrate
   register: backupinstalled
   command: drush en -y backup_migrate --root={{ drupal_absolute_docroot }} 
@@ -9,9 +8,19 @@
   git:
     repo: "{{ php_s3_lib_repo }}"
     clone: yes
-    dest: "{{ drupal_absolute_docroot }}/sites/all/libraries/s3-php-class"
+    dest: "{{ drupal_absolute_docroot }}/sites/all/libraries/s3-php5-curl"
   ignore_errors: true
 
+- name: Copy urlencode script
+  copy: src=roles/backup_s3/files/script.php dest=/tmp/script.php
+
+- name: urlencode aws key & secret
+  command: php /tmp/script.php {{ item }}
+  register: keys
+  with_items: 
+    - "{{ aws_access_key }}"
+    - "{{ aws_access_secret }}"
+  no_log: true
 
 - name: push mysqldump template
   when: backupinstalled|success

@@ -1,0 +1,46 @@
+---
+
+- name: Install ufw
+  apt: pkg=ufw state=latest update_cache=yes
+  register: ufwinstalled
+  notify:
+    - start ufw
+
+- name: Couldn't install ufw
+  when: ufwinstalled|failed
+  fail: msg="couldn't install ufw, please check logs"
+
+- name: Ensure ipv6 is disabled
+  when: ufwinstalled|success
+  lineinfile:
+    name: /etc/default/ufw 
+    regexp: "^IPV6=yes$"
+    line: "IPV6=no"
+  notify:
+    - restart ufw
+
+- name: Setup default Incoming policy
+  when: ufwinstalled|success
+  ufw:
+    state: enabled
+    direction: incoming
+    policy: deny
+
+- name: Setup default Outgoing policy
+  when: ufwinstalled|success
+  ufw:
+    direction: outgoing
+    policy: allow
+
+- name: Allow SSH, HTTP, HTTPS
+  when: ufwinstalled|success
+  ufw:
+    rule: allow
+    protocol: tcp
+    port: "{{ item }}"
+  with_items:
+    - 22
+    - 80
+    - 443
+  notify:
+    - restart ufw

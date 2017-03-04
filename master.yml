@@ -3,13 +3,18 @@
    become: yes
    user: ubuntu
    roles:
-    - common
-#   - letsencrypt
-    - nginx
-    - mysql
-    - php
+#    - common
+#    - ufw
+#    - ssh
+#    - no_spoofing
+#    - fail2ban
+#    - sendmail
+#    - letsencrypt
+#    - nginx
+#    - mysql
+#    - php
 #    - composer
 #    - phpmyadmin
-    - drupal
-    - civicrm
-    - backup_s3
+#    - drupal
+#    - civicrm
+#    - backup_s3

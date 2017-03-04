@@ -1,0 +1,23 @@
+---
+
+- name: apt-get update and install fail2ban
+  apt: name=fail2ban state=latest update_cache=true
+  register: fail2baninstalled
+  notify:
+      - start fail2ban
+
+- name: fail2ban instalation failed
+  when: fail2baninstalled|failed
+  fail: msg="fail2ban instalation failed, please check logs"
+
+- name: push jail.local template
+  when: fail2baninstalled|success
+  template: src=roles/fail2ban/templates/jail.local.j2 dest=/etc/fail2ban/jail.local mode=0640
+  notify:
+      - reload fail2ban
+
+
+
+
+
+     

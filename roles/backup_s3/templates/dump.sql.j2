@@ -21,7 +21,8 @@ CREATE TABLE `backup_migrate_destinations` (
 
 LOCK TABLES `backup_migrate_destinations` WRITE;
 
-INSERT INTO `backup_migrate_destinations` VALUES (1,'{{ s3_bucket_name }}','{{ s3_bucket_name }}','s3','https://{{ aws_access_key }}:{{ aws_access_secret }}.amazonaws.com/{{ s3_bucket_name }}/{{ s3_bucket_dir }}','a:0:{}');
+
+INSERT INTO `backup_migrate_destinations` VALUES (1,'{{ machine_name }}','{{ machine_name }}','s3','https://{{ keys.results[0].stdout }}:{{ keys.results[1].stdout }}@s3.amazonaws.com/{{ s3_bucket_name }}/{{ s3_bucket_dir }}','a:0:{}');
 
 UNLOCK TABLES;
 

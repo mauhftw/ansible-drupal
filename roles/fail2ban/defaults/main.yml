@@ -1,0 +1,11 @@
+---
+
+fail2ban_default_bantime: "1800"
+fail2ban_default_findtime: "600"
+fail2ban_default_destemail: "yourmail@domain.app"
+fail2ban_default_sendername: "fail2ban"
+fail2ban_default_maxretries: "3"
+#ssh
+fail2ban_ssh_port: "ssh"
+fail2ban_default_ssh_path: "/var/log/auth.log"
+fail2ban_mta: "sendmail"

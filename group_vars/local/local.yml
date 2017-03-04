@@ -1,5 +1,13 @@
 ---
 
+
+#ssh
+ssh_users:
+  - "{{ ansible_user }}"
+
+#sendmail
+sendmail_user: "noreply"
+
 #let's encrypt
 webroot_dir: "yourdomain.app"                     
 letsencrypt_command: letsencrypt
@@ -69,16 +77,30 @@ civicrm_destination: "~/civiCRM.tar.gz"
 
 #backup_s3
 php_s3_lib_repo: "https://github.com/tpyo/amazon-s3-php-class"
+machine_name: "compucorp_drupal"                                                        
 s3_bucket_name: "compucorp-drupal-backup"
 s3_bucket_dir: "test"
 aws_access_key: "{{ vault_aws_access_key }}"
 aws_access_secret: "{{ vault_aws_access_secret }}"
-profile_name: "drupal_to_aws_s3"                                    #a simple profile name
-backup_destination_name: "compucorp_drupal"                         #just a destination name for the profile
+profile_name: "drupal_to_aws_s3"                                        #a simple profile name
+backup_destination_name: "{{ machine_name }}"                           #just a destination name for the profile
 backup_filename: "rambeloff.tk"
 backup_schedule_name: "daily"
 email_notification_backup: "noreply@rambeloff.tk"
 site_offline_message: "rambeloff.tk is currently under maintenance. We should be back shortly. Thank you for your patience."
+
+#fail2ban
+fail2ban_default_bantime: "1800"
+fail2ban_default_findtime: "600"
+fail2ban_default_destemail: "maashimine@gmail.com"
+fail2ban_default_sendername: "fail2ban"
+fail2ban_default_maxretries: "3"
+#ssh
+fail2ban_ssh_port: "ssh"
+
+fail2ban_default_ssh_path: "/var/log/auth.log"
+fail2ban_mta: "sendmail"
+
 
 
 #composer

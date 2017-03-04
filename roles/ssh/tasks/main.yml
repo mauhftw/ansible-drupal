@@ -1,0 +1,40 @@
+---
+
+- name: Set PermitRootLogin to no
+  lineinfile:
+    name: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+
+- name: Allow certain users
+  lineinfile:
+    name: /etc/ssh/sshd_config
+    regexp: "^AllowUsers"
+    line: "AllowUsers {{ item }}"
+  with_items: "{{ ssh_users }}"
+
+- name: Set PermitEmptyPasswords to no
+  lineinfile:
+    name: /etc/ssh/sshd_config
+    regexp: "^#PermitEmptyPasswords|^PermitEmptyPasswords"
+    line: "PermitEmptyPasswords no"
+
+- name: Set PasswordAuthentication to no
+  lineinfile:
+    name: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication|^PasswordAuthentication"
+    line: "PasswordAuthentication no"
+
+- name: Set StrictModes to no
+  lineinfile:
+    name: /etc/ssh/sshd_config
+    regexp: "^#StrictModes|^StrictModes"
+    line: "StrictModes yes"
+  notify:
+      - reload ssh
+
+
+
+
+
+     

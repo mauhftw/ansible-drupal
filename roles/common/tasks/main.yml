@@ -8,3 +8,6 @@
       - htop
       - git
       - drush
+      - python-pexpect
+      - pip
+      

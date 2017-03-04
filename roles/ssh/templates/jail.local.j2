@@ -1,0 +1,18 @@
+[DEFAULT]
+
+ignoreip = 127.0.0.1/8
+bantime = {{ fail2ban_default_bantime }}
+findtime = {{ fail2ban_default_findtime }}
+maxretry = {{ fail2ban_default_maxretries }}
+destemail = {{ fail2ban_default_destemail }}
+sendername = {{ fail2ban_default_sendername }}
+mta = {{ fail2ban_mta }}
+action = %(action_mwl)s
+
+[sshd]
+
+enabled = true
+port = {{ fail2ban_ssh_port }}
+filter = sshd
+logpath = {{ fail2ban_default_ssh_path }}
+maxtretry = {{ fail2ban_default_maxretries }}
