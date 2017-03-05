@@ -9,5 +9,6 @@
       - git
       - drush
       - python-pexpect
-      - pip
+      - python-pip
+      - python-boto
       

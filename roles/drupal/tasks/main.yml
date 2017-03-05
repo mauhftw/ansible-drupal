@@ -61,7 +61,7 @@
   fail: msg="couldn't install views3"
 
 - name: Ensure private directory exists
-  file: dest={{ drupal_absolute_docroot }}/sites/default/private mode=770 state=directory owner=root group=www-data recurse=yes
+  file: dest={{ drupal_absolute_docroot }}/sites/default/files/private mode=770 state=directory owner=root group=www-data recurse=yes
 
 # set dir_permissions
 - include: roles/permissions/tasks/main.yml

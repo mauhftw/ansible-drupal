@@ -1,6 +1,18 @@
 ---
 
 
+#backup  
+aws_access_key: "{{ vault_aws_access_key }}"
+aws_access_secret: "{{ vault_aws_access_secret }}"
+region: "us-east-1"
+s3_bucket: "compucorp-backup-testing"
+s3_prefix: "drupal"
+backup_name: "{{ domain }}"
+backup_tmp_dest: "/tmp/dump"
+
+
+
+
 #ssh
 ssh_users:
   - "{{ ansible_user }}"
@@ -38,7 +50,6 @@ php_packages:
   - php7.0-apcu
   - php7.0-xml
 
-
 #mysql
 mysql_port: "3306"
 mysql_bind_address: "127.0.0.1"
@@ -48,7 +59,6 @@ mysql_packages:
   - mysql-client
   - python-mysqldb
   - libmysqlclient-dev
-
 
 #drupal
 drupal_db: "drupal"
@@ -76,18 +86,19 @@ civicrm_url: "https://download.civicrm.org/civicrm-4.7.16-drupal.tar.gz?src=dona
 civicrm_destination: "~/civiCRM.tar.gz"
 
 #backup_s3
-php_s3_lib_repo: "https://github.com/tpyo/amazon-s3-php-class"
-machine_name: "compucorp_drupal"                                                        
-s3_bucket_name: "compucorp-drupal-backup"
-s3_bucket_dir: "test"
-aws_access_key: "{{ vault_aws_access_key }}"
-aws_access_secret: "{{ vault_aws_access_secret }}"
-profile_name: "drupal_to_aws_s3"                                        #a simple profile name
-backup_destination_name: "{{ machine_name }}"                           #just a destination name for the profile
-backup_filename: "rambeloff.tk"
-backup_schedule_name: "daily"
-email_notification_backup: "noreply@rambeloff.tk"
-site_offline_message: "rambeloff.tk is currently under maintenance. We should be back shortly. Thank you for your patience."
+# php_s3_lib_repo: "https://github.com/tpyo/amazon-s3-php-class"
+# machine_name: "compucorp_drupal"                                                        
+# s3_bucket_name: "compucorp-drupal-backup"
+# s3_bucket_dir: "test"
+# aws_access_key: "{{ vault_aws_access_key }}"
+# aws_access_secret: "{{ vault_aws_access_secret }}"
+# profile_name: "drupal_to_aws_s3"                                        #a simple profile name
+# backup_destination_name: "{{ machine_name }}"                           #just a destination name for the profile
+# backup_filename: "rambeloff.tk"
+# backup_schedule_name: "daily"
+# cron_schedule: "0 4 * * *"                                              #executes backup every day 04:00hs
+# email_notification_backup: "noreply@rambeloff.tk"
+# site_offline_message: "rambeloff.tk is currently under maintenance. We should be back shortly. Thank you for your patience."
 
 #fail2ban
 fail2ban_default_bantime: "1800"
@@ -97,7 +108,6 @@ fail2ban_default_sendername: "fail2ban"
 fail2ban_default_maxretries: "3"
 #ssh
 fail2ban_ssh_port: "ssh"
-
 fail2ban_default_ssh_path: "/var/log/auth.log"
 fail2ban_mta: "sendmail"
 

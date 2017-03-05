@@ -4,6 +4,10 @@
   register: backupinstalled
   command: drush en -y backup_migrate --root={{ drupal_absolute_docroot }} 
 
+- name: Download and enable elysia cron
+  when: backupinstalled|success
+  command: drush en -y elysia_cron --root={{ drupal_absolute_docroot }} 
+
 - name: Download s3-php-lib
   git:
     repo: "{{ php_s3_lib_repo }}"
