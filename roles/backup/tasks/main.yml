@@ -24,3 +24,13 @@
 - name: Copy backup script
   when: awsinstalled|success
   template: src=roles/backup/templates/backup.sh.j2 dest=~/.cron/backup.sh owner=root group=root mode=700 
+
+- name: set backup's cronjob
+  cron:
+    name: "{{ cronjob_name }}"
+    minute: "{{ cronjob_schedule_minute }}"
+    hour: "{{ cronjob_schedule_hour }}"
+    day: "{{ cronjob_schedule_day }}"
+    month: "{{ cronjob_schedule_month }}"
+    weekday: "{{ cronjob_schedule_weekday }}"
+    job: "~/.cron/backup.sh"

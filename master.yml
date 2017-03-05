@@ -1,21 +1,21 @@
 ---
+
  - hosts: local
    become: yes
    user: ubuntu
+   
    roles:
-#    - common
-#    - ufw
-#    - ssh
-#    - no_spoofing
-#    - fail2ban
-    # - sendmail
-    # - letsencrypt
-    # - nginx
-    # - mysql
-    # - php
-    # - composer
-    # - phpmyadmin
-    #- drupal
-    #- civicrm
-    #- backup_s3
+    - common
+    - ufw
+    - ssh
+    - no_spoofing
+    - fail2ban
+    - sendmail
+    - letsencrypt
+    - nginx
+    - mysql
+    - php
+    - drupal
+    - civicrm
     - backup
+#   - backup_s3

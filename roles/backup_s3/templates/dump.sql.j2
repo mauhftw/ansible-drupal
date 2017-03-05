@@ -82,7 +82,7 @@ CREATE TABLE `backup_migrate_schedules` (
 
 LOCK TABLES `backup_migrate_schedules` WRITE;
 
-INSERT INTO `backup_migrate_schedules` VALUES (1,'untitled_schedule','{{ backup_schedule_name }}','archive','{{ backup_destination_name }}','','default',0,86400,1,'elysia','{{ cron_schedule }}');
+INSERT INTO `backup_migrate_schedules` VALUES (1,'untitled_schedule','{{ backup_schedule_name }}','archive','{{ backup_destination_name }}','','default',0,86400,1,'builtin','{{ cron_schedule }}');
 
 UNLOCK TABLES;
 
@@ -110,16 +110,3 @@ CREATE TABLE `backup_migrate_sources` (
 LOCK TABLES `backup_migrate_sources` WRITE;
 
 UNLOCK TABLES;
-
-
---
--- Table structure for table `elysia_cron`
---
-
-
---
--- Dumping data for table `elysia_cron`
---
-
-INSERT INTO `elysia_cron` (`name`, `disable`, `rule`, `weight`, `context`, `running`, `last_run`, `last_aborted`, `abort_count`, `last_abort_function`, `last_execution_time`, `execution_count`, `avg_execution_time`, `max_execution_time`, `last_shutdown_time`) VALUES
-('backup_migrate_untitled_schedule', NULL, NULL, NULL, NULL, 1488679538, 1488679538, 0, 0, NULL, 410, 1, 410, 410, 0);

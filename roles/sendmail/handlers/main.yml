@@ -1,5 +1,8 @@
 ---
 
-- name: start networking
+- name: restart networking
   service: name=networking state=restarted
+
+- name: start sendmail
+  service: name=sendmail state=started
 

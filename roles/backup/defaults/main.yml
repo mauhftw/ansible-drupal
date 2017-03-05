@@ -1,19 +1,15 @@
 ---
 
-php_s3_lib_repo: "https://github.com/tpyo/amazon-s3-php-class"
-s3_bucket_name: "default_bucket"
-s3_bucket_dir: "test"
-aws_access_key: "your_aws_access_key"
-aws_access_secret: "your_aws_access_secret"
-
-profile_name: "drupal_to_aws_s3"                #a simple profile name
-backup_destination_name: "drupal_backup"        #just a destination name for the profile
-backup_filename: "drupalbackup"         
-backup_schedule_name: "daily_backup"
-cron_schedule: "0 4 * * *"
-
-email_notification_backup: "noreply@site.app"
-site_offline_message: "site.app is currently under maintenance. We should be back shortly. Thank you for your patience."
-
-drupal_absolute_docroot: "/var/www/yourdomain.app"
-drupal_db: "drupal"
+aws_access_key: "AKIAIOSFODNN7EXAMPLE"
+aws_access_secret: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+region: "us-east-1"
+s3_bucket: "backup_bucket_example"
+s3_prefix: "example"
+backup_name: "examplename"
+backup_tmp_dest: "/tmp/dump"
+cronjob_name: "backup_cron_example"
+cronjob_schedule_minute: "0"
+cronjob_schedule_hour: "4"
+cronjob_schedule_day: "*"
+cronjob_schedule_month: "*"
+cronjob_schedule_weekday: "*"

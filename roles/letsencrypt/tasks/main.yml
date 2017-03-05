@@ -13,7 +13,7 @@
   file: dest={{ letsencrypt_webroot_path }} mode=755 state=directory owner=root group=www-data
 
 - name: Create SSL certificate
-  command: "{{ letsencrypt_command }} -a standalone auth --webroot-path {{ letsencrypt_webroot_path }} -d {{ domain }} -d {{ domain_www }} -m {{ letsencrypt_email }} --agree-tos"
+  command: "{{ letsencrypt_command }} -a standalone auth --webroot-path {{ letsencrypt_webroot_path }} -d {{ domain }} -d www.{{ domain }} -m {{ letsencrypt_email }} --agree-tos"
 
 - name: Install cronjob for renewing certs
   copy: src=roles/letsencrypt/files/renewCerts.sh dest=/etc/cron.daily/renewCerts.sh mode=0740
