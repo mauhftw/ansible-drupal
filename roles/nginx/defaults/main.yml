@@ -3,5 +3,4 @@
 domain: yourdomain.app                        
 domain_www: www.yourdomain.app                
 resolver: 8.8.8.8
-username: ubuntu
 nginx_worker_processes: "{{ ansible_processor_cores }}"

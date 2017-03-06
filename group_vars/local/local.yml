@@ -19,15 +19,13 @@ sendmail_user: "noreply"
 
 #letsencrypt
 webroot_dir: "yourdomain.app"                     
-letsencrypt_command: letsencrypt
 letsencrypt_webroot_path: "/var/www/{{ webroot_dir }}"
 letsencrypt_email: mail@yourdomain.app
 
 #nginx
 nginx_worker_processes: "{{ ansible_processor_cores }}"
 domain: yourdomain.app
-domain_www: www.yourdomain.app
-username: ubuntu                       
+domain_www: www.yourdomain.app                   
 resolver: 8.8.8.8
 
 #mysql
@@ -76,9 +74,6 @@ rootdir: "{{ domain }}"
 civicrm_db: "civicrm"
 civicrm_user: "civicrmuser"
 civicrm_password: "{{ vault_civicrm_password }}"
-civicrm_drush_repo: "https://github.com/civicrm/civicrm-drupal"
-civicrm_drush_branch: "7.x-master"
-civicrm_drush_destination: "~/civiCRM"
 civicrm_url: "https://download.civicrm.org/civicrm-4.7.16-drupal.tar.gz?src=donate"
 civicrm_destination: "~/civiCRM.tar.gz"
 
