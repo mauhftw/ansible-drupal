@@ -122,7 +122,7 @@ Before you run the ansible role, please configure your group_vars. In the next p
 - `cronjob_schedule_month:` 
 - `cronjob_schedule_weekday:` 
 
-This parameters works like a conventional unix-like cronjob.
+These parameters work like a conventional unix-like cronjob.
 
 
 Field	| Required | Allowed values |	Allowed special characters |
